@@ -1,16 +1,19 @@
-from osc4py3.as_eventloop import *
-from osc4py3 import oscmethod as osm
-import time
+from oscpy.server import OSCThreadServer
+from time import sleep
+from oscpy.client import OSCClient
 
-osc_startup()
+accx = 0
+accy = 0
+accz = 0
 
-def prediction(left, right):
-  print(“Left prediction : “,round(left,2),”Right prediction : “,round(right,2))
- 
-osc_udp_server(“127.0.0.1”, 9002, “neuropype”)
-osc_method(“/neuropype”, prediction)
-finished = False
 
-while not finished:
-  osc_process()
-  osc_terminate()
+osc = OSCThreadServer()
+sock = osc.listen(address='127.0.0.1', port=9002, default=True)
+@osc.address(b'/neuropype')
+def callback(left, right):
+  print("Left prediction : ",round(left,2),"Right prediction : ",round(right,2))
+
+
+
+sleep(100)
+
